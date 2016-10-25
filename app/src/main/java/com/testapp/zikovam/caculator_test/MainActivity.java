@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     int flagAction = 0;
     StringBuilder mathStr = new StringBuilder();
-    double result;
+    //double result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,13 +81,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void checkThreeNum () {
-//        if (flagAction == 4) {
-//            char temp = mathStr.charAt(mathStr.length()-1);
-//            mathStr.delete(mathStr.length()-1,mathStr.length());
-//            mathStr.append(",");
-//            mathStr.append(temp);
-//            flagAction = 1;
+//        int index = mathStr.length()-1;
+//        while (flagAction >= 4) {
+//            index-=3;
+//            mathStr.insert(index,',');
+//            flagAction-=3;
 //        }
+        flagAction = 0;
     }
 
     @Override
@@ -95,76 +96,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnOne:
                 mathStr.append("1");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnTwo:
                 mathStr.append("2");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnThree:
                 mathStr.append("3");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnFour:
                 mathStr.append("4");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnFive:
                 mathStr.append("5");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnSix:
                 mathStr.append("6");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnSeven:
                 mathStr.append("7");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnEight:
                 mathStr.append("8");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnNine:
                 mathStr.append("9");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnZero:
                 mathStr.append("0");
                 flagAction++;
-                checkThreeNum();
                 break;
             case R.id.btnPlus:
                 mathStr.append("+");
-                flagAction = 0;
+                checkThreeNum();
                 break;
             case R.id.btnMinus:
                 mathStr.append("-");
-                flagAction = 0;
+                checkThreeNum();
                 break;
             case R.id.btnMulti:
                 mathStr.append("*");
-                flagAction = 0;
+                checkThreeNum();
                 break;
             case R.id.btnDiv:
                 mathStr.append("/");
-                flagAction = 0;
+                checkThreeNum();
                 break;
             case R.id.btnOpenBracket:
                 mathStr.append("(");
-                flagAction = 0;
+                checkThreeNum();
                 break;
             case R.id.btnCloseBracket:
                 mathStr.append(")");
-                flagAction = 0;
+                checkThreeNum();
                 break;
             case R.id.btnDel:
                 if (mathStr.length()!=0)
@@ -172,24 +163,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btnClear:
                 mathStr.delete(0,mathStr.length());
+                flagAction = 0;
                 break;
             case R.id.btnPercent:
-            case R.id.btnEqual:
-                ExpressionParser parser = new ExpressionParser();
-                List<String> expression = parser.parse(mathStr.toString());
-                //boolean flag = parser.flag;
+                //проценты. работают так: если вводится символ процента, то мы считаем всё до него и последней цифры и знака
+                //а после уже к этому результату присовокупляем проценты
+                if (mathStr.length()==flagAction){
+                    int num = Integer.parseInt(mathStr.toString());
+                    mathStr.delete(0, mathStr.length());
+                    mathStr.append(String.valueOf((double)num/100));
+                }
+                else if ((mathStr.length()>=3)&&(flagAction!=0)) {
+                    ExpressionParser parser1 = new ExpressionParser();
+                    List<String> expression1 = parser1.parse(mathStr.substring(0, mathStr.length() - (flagAction + 1)));
 
-                if (parser.flag) {
-                    for (String x : expression) System.out.print(x + " ");
-                    CalculatePoland result = new CalculatePoland();
-                    mathStr.delete(0,mathStr.length());
-                    mathStr.append(result.calc(expression));
+                    char action = mathStr.charAt(mathStr.length() - (flagAction + 1));
+                    String strPercent = mathStr.substring(mathStr.length() - (flagAction), mathStr.length());
+                    int numPercent = Integer.parseInt(strPercent);
+
+                    if (parser1.flag) {
+                        for (String x : expression1) System.out.print(x + " ");
+                        CalculatePoland result = new CalculatePoland();
+                        mathStr.delete(0, mathStr.length());
+                        double equalization = result.calc(expression1);
+                        double percentEqual = equalization / 100 * numPercent;
+
+                        List<String> percents = new ArrayList<>();
+                        percents.add(String.valueOf(equalization));
+                        percents.add(String.valueOf(percentEqual));
+                        percents.add(String.valueOf(action));
+
+                        mathStr.append(result.calc(percents));
+                    } else {
+                        Toast.makeText(MainActivity.this, "Некорректное выражение.", Toast.LENGTH_LONG).show();
+                        parser1.flag = true;
+                    }
                 }
-                else {//if (parser.flag == false){
+                else{
                     Toast.makeText(MainActivity.this, "Некорректное выражение.", Toast.LENGTH_LONG).show();
-                    //mathStr.delete(0,mathStr.length());
-                    parser.flag = true;
                 }
+                break;
+            case R.id.btnEqual:
+                    ExpressionParser parser = new ExpressionParser();
+                    List<String> expression = parser.parse(mathStr.toString());
+
+                    if (parser.flag) {
+                        for (String x : expression) System.out.print(x + " ");
+                        CalculatePoland result = new CalculatePoland();
+                        mathStr.delete(0, mathStr.length());
+                        mathStr.append(result.calc(expression));
+                    } else {
+                        Toast.makeText(MainActivity.this, "Некорректное выражение.", Toast.LENGTH_LONG).show();
+                        parser.flag = true;
+                    }
                 break;
         }
         tvLCD.setText(mathStr.toString());

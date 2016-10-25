@@ -57,10 +57,9 @@ public class ExpressionParser {
             if (!tokenizer.hasMoreTokens() && isOperator(curr)) {
                 //System.out.println("Некорректное выражение.");
                 flag = false;
-                //return postfix;
-                return null;
+                return postfix;
             }
-            if (curr.equals(",")) continue;
+            if (curr.equals(',')) continue;
             if (isFunction(curr)) stack.push(curr);
             else if (isDelimiter(curr)) {
                 if (curr.equals("(")) stack.push(curr);
@@ -69,7 +68,6 @@ public class ExpressionParser {
                         //System.out.println("Скобки не согласованы.");
                         flag = false;
                         return postfix;
-                        //return null;
                     }
                     while (!stack.peek().equals("(")) {
                         postfix.add(stack.pop());
@@ -77,7 +75,6 @@ public class ExpressionParser {
                             //System.out.println("Скобки не согласованы.");
                             flag = false;
                             return postfix;
-                            //return null;
                         }
                     }
                     stack.pop();
