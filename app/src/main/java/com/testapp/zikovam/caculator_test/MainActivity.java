@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -16,7 +17,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnPercent, btnDel;
     TextView tvLCD;
 
-    int operand1, operand2, flagAction;
+    int flagAction = 0;
     StringBuilder mathStr = new StringBuilder();
     double result;
 
@@ -78,56 +79,92 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnEqual.setOnClickListener(this);
     }
 
+    private void checkThreeNum () {
+//        if (flagAction == 4) {
+//            char temp = mathStr.charAt(mathStr.length()-1);
+//            mathStr.delete(mathStr.length()-1,mathStr.length());
+//            mathStr.append(",");
+//            mathStr.append(temp);
+//            flagAction = 1;
+//        }
+    }
+
     @Override
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.btnOne:
                 mathStr.append("1");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnTwo:
                 mathStr.append("2");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnThree:
                 mathStr.append("3");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnFour:
                 mathStr.append("4");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnFive:
                 mathStr.append("5");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnSix:
                 mathStr.append("6");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnSeven:
                 mathStr.append("7");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnEight:
                 mathStr.append("8");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnNine:
                 mathStr.append("9");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnZero:
                 mathStr.append("0");
+                flagAction++;
+                checkThreeNum();
                 break;
             case R.id.btnPlus:
                 mathStr.append("+");
+                flagAction = 0;
                 break;
             case R.id.btnMinus:
                 mathStr.append("-");
+                flagAction = 0;
                 break;
             case R.id.btnMulti:
                 mathStr.append("*");
+                flagAction = 0;
                 break;
             case R.id.btnDiv:
                 mathStr.append("/");
+                flagAction = 0;
                 break;
             case R.id.btnOpenBracket:
                 mathStr.append("(");
+                flagAction = 0;
                 break;
             case R.id.btnCloseBracket:
                 mathStr.append(")");
+                flagAction = 0;
                 break;
             case R.id.btnDel:
                 if (mathStr.length()!=0)
@@ -137,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mathStr.delete(0,mathStr.length());
                 break;
             case R.id.btnPercent:
-                break;
             case R.id.btnEqual:
                 ExpressionParser parser = new ExpressionParser();
                 List<String> expression = parser.parse(mathStr.toString());
@@ -155,10 +191,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     parser.flag = true;
                 }
                 break;
-
-
-
         }
         tvLCD.setText(mathStr.toString());
+
     }
 }

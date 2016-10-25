@@ -60,7 +60,7 @@ public class ExpressionParser {
                 //return postfix;
                 return null;
             }
-            //if (curr.equals(" ")) continue;
+            if (curr.equals(",")) continue;
             if (isFunction(curr)) stack.push(curr);
             else if (isDelimiter(curr)) {
                 if (curr.equals("(")) stack.push(curr);
